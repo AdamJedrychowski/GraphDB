@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista pracowników{% endblock %}
+
+{% block header %}Lista pracowników{% endblock %}
+
+{% block content %}
+{% for e in employees %}
+	<a href="/employee/options/{{ e._element_id }}">{{ e['name'] }} {{ e['surname'] }} {{ e['age'] }}</a><br>
+{% endfor %}
+{% endblock %}

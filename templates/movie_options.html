@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Menu akcji{% endblock %}
+
+{% block header %}Menu akcji{% endblock %}
+
+{% block content %}
+<a href="/movie/employees/{{ id }}">Lista aktorów</a><br>
+<a href="/movie/remove/{{ id }}">Usuń</a><br>
+<a href="/movie/update/{{ id }}">Aktualizuj dane</a>
+{% endblock %}

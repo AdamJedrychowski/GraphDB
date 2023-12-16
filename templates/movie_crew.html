@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Ekipa filmowa{% endblock %}
+
+{% block header %}Ekipa filmowa{% endblock %}
+
+{% block content %}
+{% for person in crew %}
+{{ person[0] }} {{ person[1]['name'] }} {{ person[1]['surname'] }} {{ person[1]['age'] }}<br>
+{% endfor %}
+{% endblock %}

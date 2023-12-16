@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista filmów{% endblock %}
+
+{% block header %}Lista filmów w której brał udział{% endblock %}
+
+{% block content %}
+{% for m in movies %}
+    {{ m[0] }} {{ m[1]['title'] }} {{ m[1]['premiere'] }} {{ m[1]['rating'] }}<br>
+{% endfor %}
+{% endblock %}

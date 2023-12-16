@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Dodawanie pracownika{% endblock %}
+
+{% block header %}Dodawanie pracownika{% endblock %}
+
+{% block content %}
+<form method="post">
+	Imię: <input type="text" name="name"></input><br>
+	Nazwisko: <input type="text" name="surname"></input><br>
+	Wiek: <input type="number" name="age"></input><br>
+	<button type="submit">Dodaj</button>
+</form>
+{% endblock %}

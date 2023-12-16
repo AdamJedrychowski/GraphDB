@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Aktualizuj dane{% endblock %}
+
+{% block header %}Aktualizuj dane pracownika{% endblock %}
+
+{% block content %}
+<form method="post">
+	Imie: <input type="text" name="name" value="{{ empl['name'] }}"><br>
+	Nazwisko: <input type="text" name="surname" value="{{ empl['surname'] }}"><br>
+	Wiek: <input type="number" name="age" value="{{ empl['age'] }}"><br>
+	<button type="submit">Zapisz</button>
+</form>
+{% endblock %}

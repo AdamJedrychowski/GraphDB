@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista filmów{% endblock %}
+
+{% block header %}Lista filmów{% endblock %}
+
+{% block content %}
+{% for m in movies %}
+	<a href="/movie/options/{{ m._element_id }}">{{ m['title'] }} {{ m['premiere'] }} {{ m['rating'] }}</a><br>
+{% endfor %}
+{% endblock %}

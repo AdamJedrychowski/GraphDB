@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %} - Baza Grafowa</title>
+    </head>
+    <body>
+        <h2><a href="/">Baza danych filmów i pracowników</a></h2>
+        <h3>{% block header %}{% endblock %}</h3>
+        {% block content %}{% endblock %}
+    </body>
+</html>

@@ -1,5 +1,8 @@
 # Prerequisites
 *.d
+__pycache__
+.vscode
+.venv
 
 # Compiled Object files
 *.slo
