@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% block title %}Przypisz pracownika do filmu{% endblock %}
-
 {% block header %}Przypisz pracownika do filmu{% endblock %}
 
 {% block content %}
@@ -13,7 +11,7 @@
 	<br>
 	<br>
 	{% for m in movies %}
-		<input type="radio" name="movie" value="{{ m._element_id }}">{{ m['title'] }} {{ m['premiere'] }} {{ m['rating'] }}<br>
+		<input type="radio" name="movie" value="{{ m[0]._element_id }}">{{ m[0]['title'] }} {{ m[0]['premiere'] }} {% if m[1] %}{{ '%0.2f'|format(m[1]|float) }}{% endif %}<br>
 	{% endfor %}
 	<br>
 	<button type="submit">Zapisz</button>

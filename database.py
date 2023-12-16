@@ -4,21 +4,31 @@ from neo4j.exceptions import AuthError
 
 class GraphDB:
     def __init__(self, uri, user, password):
-        self.driver = GraphDatabase.driver(uri, auth=(user, password))
+        self.driver = GraphDatabase.driver(uri, auth=(user, password), max_connection_lifetime=200)
         try:
             self.driver.verify_connectivity()
         except Exception as e:
             print(e.message)
 
     def add_person(self, name, surname, age):
-        query = 'CREATE (e:Employee {name:$name, surname:$surname, age:$age}) RETURN elementId(e);'
+        query = 'CREATE (e:Employee {name:$name, surname:$surname, age:$age}) RETURN elementId(e)'
         with self.driver.session() as session:
             return session.run(query, name=name, surname=surname, age=int(age)).value()[0]
 
-    def add_movie(self, title, premiere, rating):
-        query = 'CREATE (m:Movie {title:$title, premiere:$premiere, rating:$rating}) RETURN elementId(m);'
+    def add_movie(self, title, premiere):
+        query = 'CREATE (m:Movie {title:$title, premiere:$premiere}) RETURN elementId(m)'
         with self.driver.session() as session:
-            return session.run(query, title=title, premiere=Date.parse(premiere), rating=float(rating)).value()[0]
+            return session.run(query, title=title, premiere=Date.parse(premiere)).value()[0]
+
+    def get_opinions(self, id):
+        query = 'MATCH (m:Movie)<-[r:RATED]-(o:Opinion) WHERE elementId(m)=$id RETURN o'
+        with self.driver.session() as session:
+            return session.run(query, id=id).value()
+
+    def add_rate(self, id, rating, comment):
+        query = 'MATCH (m:Movie) WHERE elementId(m)=$movieID CREATE (m)<-[r:RATED]-(o:Opinion {rating:$rating, comment:$comment})'
+        with self.driver.session() as session:
+            session.run(query, movieID=id, rating=float(rating), comment=comment)
 
     def get_all_employees(self):
         query = 'MATCH (e:Employee) RETURN e'
@@ -26,9 +36,9 @@ class GraphDB:
             return(session.run(query).value())
 
     def get_all_movies(self):
-        query = 'MATCH (m:Movie) RETURN m'
+        query = 'MATCH (m:Movie) OPTIONAL MATCH (m)<-[r:RATED]-(o:Opinion) RETURN m, avg(o.rating)'
         with self.driver.session() as session:
-            return session.run(query).value()
+            return session.run(query).values()
 
     def assign_employee(self, empl_id, movie_id, role):
         query = 'MATCH (e:Employee), (m:Movie) WHERE elementId(e)=$employeeID AND elementId(m)=$movieID CREATE (e)-[w:WORK_ON {role: $role}]->(m)'
@@ -45,19 +55,13 @@ class GraphDB:
         with self.driver.session() as session:
             return session.run(query, employeeID=id).values()
 
-    def filter_db(self, role, rating, age, name, surname, title, premiere, top, sort):
+    def filter_db(self, role, age, name, surname, title, premiere, top, sort):
         query = 'MATCH (e:Employee)-[w:WORK_ON]->(m:Movie)'
         where = []
         inputs = {}
         if role != 'None':
             where.append('w.role=$role')
             inputs.setdefault('role', role)
-
-        if rating != 'None':
-            where.append('m.rating>$lowRating AND m.rating<=$highRating')
-            print(rating)
-            inputs.setdefault('lowRating', float(rating)-1)
-            inputs.setdefault('highRating', float(rating))
 
         if age != 'None':
             where.append('e.age>$lowAge AND e.age<=$highAge')
@@ -86,12 +90,15 @@ class GraphDB:
         where = ' AND '.join(where)
         if where:
             query += ' WHERE ' + where
-        query += ' RETURN e, w.role, m'
+
+        query += ' OPTIONAL MATCH (m)<-[r:RATED]-(o:Opinion) RETURN e, w.role, m, avg(o.rating) AS rating'
 
         if sort in ['name', 'surname']:
             query += ' ORDER BY e.'+sort
-        elif sort in ['title', 'rating']:
-            query += ' ORDER BY e.'+sort
+        elif sort == 'title':
+            query += ' ORDER BY m.'+sort
+        elif sort == 'rating':
+            query += ' ORDER BY '+sort
 
         try:
             tmp = int(top)
@@ -127,7 +134,7 @@ class GraphDB:
         with self.driver.session() as session:
             return session.run(query, movieID=id).single()[0]
 
-    def update_movie(self, id, title, premiere, rating):
-        query = 'MATCH (m:Movie) WHERE elementId(m)=$movieID SET m.title=$title, m.premiere=$premiere, m.rating=$rating'
+    def update_movie(self, id, title, premiere):
+        query = 'MATCH (m:Movie) WHERE elementId(m)=$movieID SET m.title=$title, m.premiere=$premiere'
         with self.driver.session() as session:
-            session.run(query, movieID=id, title=title, premiere=premiere, rating=float(rating))
+            session.run(query, movieID=id, title=title, premiere=Date.parse(premiere))

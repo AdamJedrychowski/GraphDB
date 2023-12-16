@@ -25,13 +25,8 @@ def add_movie():
     if request.method == 'POST':
         title = request.form['title']
         premiere = request.form['premiere']
-        rating = request.form['rating']
-        try:
-            float(rating)
-            if title.strip() and premiere.strip():
-                db.add_movie(title, premiere, rating)
-        except ValueError:
-            pass
+        if title.strip() and premiere.strip():
+            db.add_movie(title, premiere, )
         return redirect('/')
     
     return render_template('add_movie.html')
@@ -108,28 +103,43 @@ def movie_remove(id):
     return redirect('/')
 
 
+@app.route('/movie/opinions/<id>')
+def movie_opinions(id):
+    return render_template('movie_opinions.html', opinions=db.get_opinions(id))
+
+
 @app.route('/movie/update/<id>', methods=('GET', 'POST'))
 def movie_update(id):
     if request.method == 'POST':
         title = request.form['title']
         premiere = request.form['premiere']
-        rating = request.form['rating']
-        try:
-            float(rating)
-            if title.strip() and premiere.strip():
-                db.update_movie(id, title, premiere, rating)
-        except ValueError:
-            pass
+        if title.strip() and premiere.strip():
+            db.update_movie(id, title, premiere)
         return redirect('/')
 
     return render_template('update_movie.html', movie=db.get_movie(id))
+
+
+@app.route('/movie/comment/<id>', methods=('GET', 'POST'))
+def movie_comment(id):
+    if request.method == 'POST':
+        rating = request.form['rating']
+        comment = request.form['comment']
+        try:
+            float(rating)
+            if comment.strip():
+                db.add_rate(id, rating, comment)
+            return redirect('/')
+        except ValueError:
+            pass
+
+    return render_template('comment_movie.html')
 
 
 @app.route('/filter', methods=('GET', 'POST'))
 def filter():
     if request.method == 'POST':
         role = request.form['role']
-        rating = request.form['rating']
         age = request.form['age']
         name = request.form['name']
         surname = request.form['surname']
@@ -137,6 +147,6 @@ def filter():
         premiere = request.form['premiere']
         top = request.form['top']
         sort = request.form['sort']
-        return render_template("filter.html", objects=db.filter_db(role, rating, age, name, surname, title, premiere, top, sort))
+        return render_template("filter.html", objects=db.filter_db(role, age, name, surname, title, premiere, top, sort))
         
     return render_template("filter.html")

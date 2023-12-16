@@ -1,11 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}Lista filmów{% endblock %}
-
 {% block header %}Lista filmów{% endblock %}
 
 {% block content %}
 {% for m in movies %}
-	<a href="/movie/options/{{ m._element_id }}">{{ m['title'] }} {{ m['premiere'] }} {{ m['rating'] }}</a><br>
+	<a href="/movie/options/{{ m[0]._element_id }}">{{ m[0]['title'] }} {{ m[0]['premiere'] }} {% if m[1] %}{{ '%0.2f'|format(m[1]|float) }}{% endif %}</a><br>
 {% endfor %}
 {% endblock %}

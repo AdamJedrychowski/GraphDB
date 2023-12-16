@@ -1,14 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}Dodawanie filmu{% endblock %}
-
 {% block header %}Dodawanie filmu{% endblock %}
 
 {% block content %}
 <form method="post">
 	Tytuł: <input type="text" name="title"></input><br>
 	Premiera: <input type="date" name="premiere"></input><br>
-	Ocena: <input type="number" step="0.01" min="0" max="5" name="rating"></input><br>
 	<button type="submit">Dodaj</button>
 </form>
 {% endblock %}

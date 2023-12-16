@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block header %}Lista opini{% endblock %}
+
+{% block content %}
+Ocena Komentarz<br>
+{% for o in opinions %}
+{{ o['rating'] }} {{ o['comment'] }}<br>
+{% endfor %}
+{% endblock %}
